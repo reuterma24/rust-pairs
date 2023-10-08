@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Projekt: Pairs</title>
+    <script>
+      function getRandomNumber() {
+        return Math.random();
+      }
+    </script>
+    <style>
+      body {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+      
+      .memory {
+        display: grid;
+        grid-template-columns: repeat(8, 1fr);
+        width: 100%;
+        height: 100%;
+      }
+
+      button {
+        margin: 0;
+        border: 1 1 1 1 black;
+        background-color: blanchedalmond;
+        background-size: 100% 100%;
+        background-repeat: no-repeat;
+      }
+
+      .noclick {
+        pointer-events: none;
+      }
+    </style>
+    <script type="module">
+
+      import init, { Game } from "./pkg/pairs.js";
+      let game;
+      let allowPick = true;
+      let picked = [];
+      let done = 0;
+      init().then(() => {
+        game = new Game();
+        console.log([...Array(32).keys()].map(i => game.pick_one(i)));
+      });
+
+      window.reset = function(){
+        game = new Game();
+        // iterate over all 36 buttons and set background to none and remove noclick class
+        for(let i = 1; i <= 32; i++){
+          const button = document.getElementById(i);
+          button.style.backgroundImage = "none";
+          button.classList.remove("noclick");
+        }
+        allowPick = true;
+        picked = [];
+        done = 0;
+      }
+
+      window.pick_one = function(index){
+        if(!allowPick) return;
+        if(picked.includes(index)) return;
+        const button = document.getElementById(index);
+        const field = game.pick_one(index-1);
+        if(field == 0) throw("This shouldn't be clickable");
+        const imagePath = `./images/${field}.jpg`;
+        picked.push(index);
+        button.style.backgroundImage = `url(${imagePath})`;
+        button.classList.add("noclick");
+        if(picked.length === 2) {
+          const result = game.pick_pair(picked[0]-1, picked[1]-1);
+          if(result === -1) throw("This shouldn't be clickable");
+          if(result === 1) {
+            done++;
+            document.getElementById(picked[0]).classList.add("noclick");
+            document.getElementById(picked[1]).classList.add("noclick");
+            picked = [];
+            if(done >= 16){
+              setTimeout(() => {alert("WOW!")}, 10);
+            }
+            return;
+          }
+          allowPick = false;
+          setTimeout(() => {
+            document.getElementById(picked[0]).style.backgroundImage = "none";
+            document.getElementById(picked[1]).style.backgroundImage = "none";
+            document.getElementById(picked[0]).classList.remove("noclick");
+            document.getElementById(picked[1]).classList.remove("noclick");
+            picked = [];
+            allowPick = true;
+          }, 1000);
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <div class="memory">
+      <button id=1 onclick="pick_one(1)"></button>
+      <button id=2 onclick="pick_one(2)"></button>
+      <button id=3 onclick="pick_one(3)"></button>
+      <button id=4 onclick="pick_one(4)"></button>
+      <button id=5 onclick="pick_one(5)"></button>
+      <button id=6 onclick="pick_one(6)"></button>
+      <button id=7 onclick="pick_one(7)"></button>
+      <button id=8 onclick="pick_one(8)"></button>
+
+      <button id=9 onclick="pick_one(9)"></button>
+      <button id=10 onclick="pick_one(10)"></button>
+      <button id=11 onclick="pick_one(11)"></button>
+      <button id=12 onclick="pick_one(12)"></button>
+      <button id=13 onclick="pick_one(13)"></button>
+      <button id=14 onclick="pick_one(14)"></button>
+      <button id=15 onclick="pick_one(15)"></button>
+      <button id=16 onclick="pick_one(16)"></button>
+
+      <button id=17 onclick="pick_one(17)"></button>
+      <button id=18 onclick="pick_one(18)"></button>
+      <button id=19 onclick="pick_one(19)"></button>
+      <button id=20 onclick="pick_one(20)"></button>
+      <button id=21 onclick="pick_one(21)"></button>
+      <button id=22 onclick="pick_one(22)"></button>
+      <button id=23 onclick="pick_one(23)"></button>
+      <button id=24 onclick="pick_one(24)"></button>
+
+      <button id=25 onclick="pick_one(25)"></button>
+      <button id=26 onclick="pick_one(26)"></button>
+      <button id=27 onclick="pick_one(27)"></button>
+      <button id=28 onclick="pick_one(28)"></button>
+      <button id=29 onclick="pick_one(29)"></button>
+      <button id=30 onclick="pick_one(30)"></button>
+      <button id=31 onclick="pick_one(31)"></button>
+      <button id=32 onclick="pick_one(32)"></button>
+
+
+    </div>
+    <button onclick="reset()">Reset</button>
+  </body>
+</html>
