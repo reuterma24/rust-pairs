@@ -1,5 +1,6 @@
 use dev_martin::CheckedMultiplication;
 use crate::card::Card;
+use rand::seq::SliceRandom;
 
 #[derive(Debug)]
 pub(super) struct GameBoard {
@@ -22,6 +23,8 @@ impl GameBoard {
            cards.push(Card::new(i,  i / copies)) // integer division
         }
 
+        cards.shuffle(&mut rand::thread_rng());
+
         let game_board = GameBoard {
             value_count: values,
             copies_per_value: copies,
@@ -38,12 +41,12 @@ impl GameBoard {
 
     pub(super) fn flip_card(&mut self, index: u8) -> Result<(), &'static str> {
         if let Some(card) = self.cards.get_mut(usize::from(index)) {
-            card.reveal();
+            card.reveal()?;
             self.selected_card_indices[self.turn_count] = index;
             self.turn_count += 1;
         }
         else {
-            return Err("Could not retrieve a card for given index");
+            return Err("Could not retrieve a card for given index!");
         }
 
         // game logic
@@ -97,7 +100,7 @@ impl GameBoard {
     }
 
     fn next_player(&mut self){
-        if self.active_player == self.player_count as usize {
+        if self.active_player == (self.player_count - 1) as usize {
             self.active_player = 0
         }
         else {

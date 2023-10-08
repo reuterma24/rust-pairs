@@ -1,4 +1,4 @@
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, PartialEq, Copy, Clone)]
 enum CardState {FaceDown, FaceUp, Removed}
 
 #[derive(Debug, Copy, Clone)]
@@ -17,9 +17,13 @@ impl Card {
         };
     }
 
-    pub(super) fn reveal(&mut self) {
-        //TODO: ensure card is not flipped already
+    pub(super) fn reveal(&mut self) -> Result<(), &'static str> {
+        if self.state != CardState::FaceDown {
+            return Err("Card can not be flipped!")
+        }
+
         self.state = CardState::FaceUp;
+        Ok(())
     }
 
     pub(super) fn hide(&mut self) {

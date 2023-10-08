@@ -19,7 +19,7 @@ fn main() ->  Result<(), &'static str>  {
         board.flip_card(2)?;
         board.flip_card(3)?;
 
-        // 2nd match - player2
+        // 2nd match - player1
         board.flip_card(4)?;
         board.flip_card(5)?;
 
@@ -30,8 +30,6 @@ fn main() ->  Result<(), &'static str>  {
 }
 
 // TODO:
-// - shuffle cards
-// - do not allow flipping removed or already flipped cards
 // - game finished logic
 //
 // - restart game ???
