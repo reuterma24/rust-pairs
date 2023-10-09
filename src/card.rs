@@ -1,13 +1,18 @@
+use wasm_bindgen::prelude::wasm_bindgen;
+
 #[derive(Debug, PartialEq, Copy, Clone)]
-enum CardState {FaceDown, FaceUp, Removed}
+#[wasm_bindgen]
+pub enum CardState { FaceDown, FaceUp, Removed }
 
 #[derive(Debug, Copy, Clone)]
-pub(super) struct Card {
-    id: u8,
-    pub(super) value: u8,
-    state: CardState
+#[wasm_bindgen]
+pub struct Card {
+    pub id: u8,
+    pub value: u8,
+    pub state: CardState
 }
 
+#[wasm_bindgen]
 impl Card {
     pub(super) fn new(id: u8, value: u8) -> Card{
         return Card {

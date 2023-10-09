@@ -20,11 +20,20 @@
   <body>
     <pre id="pairs-canvas"></pre>
     <script type="module">
-      import init, { greet } from "./pkg/pairs.js";
+      import init, { greet, start, select_card } from "./pkg/pairs.js";
       
       init().then(() => {
         const pre = document.getElementById("pairs-canvas");
-        pre.textContent = greet("Martin!");
+        pre.textContent = greet();
+
+        const game_board = start(3, 2, 2);
+        select_card(game_board, 1);
+        select_card(game_board, 2);
+        select_card(game_board, 3);
+
+        console.log(game_board)
+        console.log(game_board.cards())
+
       });
     </script>
   </body>

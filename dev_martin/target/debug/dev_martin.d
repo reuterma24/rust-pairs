@@ -1,1 +1,0 @@
-C:\Users\Martin\Desktop\pairs\dev_martin\target\debug\dev_martin.exe: C:\Users\Martin\Desktop\pairs\dev_martin\src\card.rs C:\Users\Martin\Desktop\pairs\dev_martin\src\game_board.rs C:\Users\Martin\Desktop\pairs\dev_martin\src\lib.rs C:\Users\Martin\Desktop\pairs\dev_martin\src\main.rs
