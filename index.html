@@ -132,8 +132,19 @@
       window.last_active_player = 0;
       window.allowClick = true;
 
+      function getWinner(score) {
+        let max = score[0];
+        let maxIndex = 0;
+        for(let i = 1; i<score.length; i++) {
+          if(score[i] > max) {
+            max = score[i];
+            maxIndex = i;
+          }
+        }
+        return maxIndex;
+      }
 
-      window.drawBoard = function(board) {
+      window.drawBoard = async function(board) {
         window.header.innerHTML = `<h1> Active Player: Player ${board.active_player + 1}</h1><h2>Points: ${board.player_score()[board.active_player]} </h2>`;
         canvas.innerHTML = "";
         for(let i = 0; i<board.cards().length; i++) {
@@ -164,6 +175,10 @@
             newCard.style.backgroundImage = `url(./images/${card.value}.jpg)`;
           }
           canvas.appendChild(newCard);
+        }
+        if(board.game_finished) {
+          await new Promise(r => setTimeout(r, 10));
+          alert(`Player ${getWinner(board.player_score())+1} won with ${board.player_score()[getWinner(board.player_score())]} points!`);
         }
       }
       window.setup = function(values, copies, players) {
