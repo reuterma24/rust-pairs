@@ -12,7 +12,6 @@ pub struct Card {
     pub state: CardState
 }
 
-#[wasm_bindgen]
 impl Card {
     pub(super) fn new(id: u8, value: u8) -> Card{
         return Card {
