@@ -4,37 +4,177 @@
     <meta charset="utf-8">
     <title>Projekt: Pairs</title>
     <style>
+      header{
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 10%;
+        background-color: slategray;
+        display: flex;
+        justify-content: space-between;
+        outline: 2px solid black;
+      } 
+
       body {
         position: absolute;
         top: 0;
         left: 0;
         width: 100%;
+        height: 90%;
+        margin: 10vh 0 0 0;
+        padding: 0;
+      }
+
+      pre {
+        width: 100%;
+        margin: 0;
+        padding: 0;
         height: 100%;
+        display: grid;
+      }
+
+      .card {
+        background: none;
+        color: inherit;
+        border: none;
+        padding: 0;
+        font: inherit;
+        cursor: pointer;
+        outline: inherit;
+        background-color: rgb(79, 144, 184);
+        width: 100%;
+        height: 100%;
+        outline: 4px solid black;
+      }
+
+      .card:hover {
+        background-color: rgb(23, 127, 192);
+      }
+
+      .card:active {
+        background-color: rgb(53, 53, 126);
+      }
+
+      .flipped {
+        background: none;
+        color: inherit;
+        border: none;
+        padding: 0;
+        font: inherit;
+        outline: inherit;
+        width: 100%;
+        height: 100%;
+        background-size: 100% 100%;
+        background-repeat: no-repeat;
+        outline: 4px solid black;
+        pointer-events: none;
+      }
+
+      flipped {
+        width: 100%;
+        height: 100%;
+        background-size: 100% 100%;
+        background-repeat: no-repeat;
+        outline: 4px solid black;
+      }
+      .hidden {
+        display: none;
+      }
+
+      form {
         display: flex;
-        flex-direction: column;
-        align-items: center;
+        margin: auto;
+        width: 20%;
         justify-content: center;
+        flex-direction: column;
       }
     </style>
   </head>
+  
+  <header id="header" class="hidden">
+    <h2>Active Player: Player 1</h2>
+    <h2>Points: 0</h2>
+  </header>
+
   <body>
-    <pre id="pairs-canvas"></pre>
+    <form id="setupForm">
+      <label for="values">Num. of pairs:</label>
+      <input type="number" name="values" value="8" min="2" max="32" />
+      <label for="copies">Num. of copies:</label>
+      <input type="number" name="copies" value="2" min="1" max="100" />
+      <label for="players">Num. of players:</label>
+      <input type="number" name="players" value="2" min="2" max="10" />
+      <input type="submit" value="Start" />
+    </form>
+
     <script type="module">
       import init, { greet, start, select_card } from "./pkg/pairs.js";
-      
-      init().then(() => {
-        const pre = document.getElementById("pairs-canvas");
-        pre.textContent = greet();
+      function gridify(amount) {
+        let divisor = Math.floor(Math.sqrt(amount));
+        while (amount % divisor !== 0) {
+          divisor--;
+        }
+        return Math.max(divisor, amount / divisor);
+      }
+      const form = document.getElementById("setupForm");
+      form.addEventListener("submit", handleSubmit);
 
-        const game_board = start(3, 2, 2);
-        select_card(game_board, 1);
-        select_card(game_board, 2);
-        select_card(game_board, 3);
+      function handleSubmit(event) {
+        event.preventDefault();
+        const formData = new FormData(event.target);
+        setup(formData.get('values'), formData.get('copies'), formData.get('players'));
+        // hide form
+        form.style.display = "none";
+        window.header = document.getElementById("header")
+        window.header.classList.remove("hidden");
+      }
+      window.last_active_player = 0;
+      window.allowClick = true;
 
-        console.log(game_board)
-        console.log(game_board.cards())
 
-      });
+      window.drawBoard = function(board) {
+        window.header.innerHTML = `<h1> Active Player: Player ${board.active_player + 1}</h1><h2>Points: ${board.player_score()[board.active_player]} </h2>`;
+        canvas.innerHTML = "";
+        for(let i = 0; i<board.cards().length; i++) {
+          const card = board.cards()[i];
+          let newCard;
+          if(card.state === 0) {
+            newCard = document.createElement("button");
+            newCard.id = i;
+            newCard.classList = ["card"];
+            newCard.onclick = async function() {
+              if(!window.allowClick) return;
+              const result = select_card(board, i);
+              if(last_active_player != board.active_player) {
+                window.allowClick = false;
+                last_active_player = board.active_player;
+                drawBoard(result);
+                await new Promise(r => setTimeout(r, 700));
+                drawBoard(board);
+                window.allowClick = true;
+                return;
+              }
+              drawBoard(board);
+            };
+          }
+          else{
+            newCard = document.createElement("flipped");
+            newCard.id = i;
+            newCard.style.backgroundImage = `url(./images/${card.value}.jpg)`;
+          }
+          canvas.appendChild(newCard);
+        }
+      }
+      window.setup = function(values, copies, players) {
+        init().then(() => {
+          window.game_board = start(values, copies, players);
+          window.canvas = document.createElement("pre");
+          canvas.style.gridTemplateColumns = `repeat(${gridify(game_board.cards().length)}, 1fr)`;
+          document.body.appendChild(canvas);
+          drawBoard(game_board);
+          });
+      }
     </script>
   </body>
 </html>
