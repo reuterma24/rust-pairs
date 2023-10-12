@@ -24,7 +24,7 @@ pub fn start(values: u8, copies: u8, players: u8) -> Result<GameBoard, String> {
 }
 
 #[wasm_bindgen]
-pub fn select_card(game_board: &mut GameBoard, index: u8) -> Result<(), String>{
+pub fn select_card(game_board: &mut GameBoard, index: u8) -> Result<GameBoard, String>{
 	return game_board.flip_card(index).map_err(|err| String::from(err));
 }
 

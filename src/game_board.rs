@@ -4,7 +4,7 @@ use rand::seq::SliceRandom;
 use wasm_bindgen::JsValue;
 use wasm_bindgen::prelude::wasm_bindgen;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 #[wasm_bindgen]
 pub struct GameBoard {
     value_count: u8, /// Number of unique values on the board (like pictures).
@@ -30,7 +30,6 @@ impl GameBoard {
         self.cards.clone().into_iter().map(JsValue::from).collect()
     }
 }
-
 
 impl GameBoard {
     pub(super) fn new_game(values: u8, copies: u8, players: u8) -> Result<Self, &'static str>{
@@ -58,7 +57,7 @@ impl GameBoard {
         return Ok(game_board)
     }
 
-    pub(super) fn flip_card(&mut self, index: u8) -> Result<(), &'static str> {
+    pub(super) fn flip_card(&mut self, index: u8) -> Result<GameBoard, &'static str> {
         self.assure_game_active()?;
 
         // logic to flip and remember the selected card
@@ -71,8 +70,11 @@ impl GameBoard {
             return Err("Could not retrieve a card for given index!");
         }
 
-        // logic to verify the current players selection of cards
-        // and increase counters
+        // not pretty, but deadline is tomorrow :)
+        let unmodified_board_state = self.clone();
+
+        // logic to verify the current players selection of cards ,
+        // modify the board state and increase counters
         if self.turn_count == self.copies_per_value as usize {
             if self.check_flipped_cards() {
                 self.increase_player_score();
@@ -90,7 +92,7 @@ impl GameBoard {
             self.game_finished();
         }
 
-        Ok(())
+        Ok(unmodified_board_state)
     }
 
     fn assure_game_active(&self) -> Result<(), &'static str>{
