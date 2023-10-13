@@ -26,7 +26,6 @@ impl GameBoard {
     }
 
     pub fn cards(&self) -> js_sys::Array {
-        //clone und into_iter ist scheinbar nötig, weil JsValue::from nicht auf Referenzen (&) klappt
         self.cards.clone().into_iter().map(JsValue::from).collect()
     }
 }

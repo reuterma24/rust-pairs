@@ -104,7 +104,7 @@
       <label for="copies">Num. of copies:</label>
       <input type="number" name="copies" value="2" min="1" max="100" />
       <label for="players">Num. of players:</label>
-      <input type="number" name="players" value="2" min="2" max="10" />
+      <input type="number" name="players" value="2" min="1" max="10" />
       <input type="submit" value="Start" />
     </form>
 
@@ -177,7 +177,7 @@
           canvas.appendChild(newCard);
         }
         if(board.game_finished) {
-          await new Promise(r => setTimeout(r, 10));
+          await new Promise(r => setTimeout(r, 100));
           alert(`Player ${getWinner(board.player_score())+1} won with ${board.player_score()[getWinner(board.player_score())]} points!`);
         }
       }
